@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
 //Test
+//Vincent's branch
 
 public class MainActivity extends Activity {
 
