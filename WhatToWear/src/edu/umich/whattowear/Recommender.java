@@ -7,17 +7,17 @@ public class Recommender {
 		weatherReport = report;
 	}
 	
-	public String getClothesToWear() {
+	public int getClothesToWear() {
 		if (weatherReport.getFeelLikeCelcius() >= 26.0) {
-			return "T-Shirts";
+			return 1;
 		} else if (weatherReport.getFeelLikeCelcius() >= 15.0) {
-			return "Sweater";
+			return 2;
 		} else if (weatherReport.getFeelLikeCelcius() >= 5.0) {
-			return "Jacket";
+			return 3;
 		} else if (weatherReport.getFeelLikeCelcius() >= -5.0) {
-			return "Coat";
+			return 4;
 		} else {
-			return "Too cold!";
+			return 5;
 		}
 	}
 }

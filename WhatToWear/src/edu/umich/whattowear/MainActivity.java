@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 //Test
@@ -22,12 +23,14 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 	
 	private TextView display;
+	private ImageView image;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);;
         display = (TextView) findViewById(R.id.text);
-        new readWeatherTask().execute("http://api.wunderground.com/api/352f5fa78aee6c34/conditions/q/CA/San_Francisco.json");
+        image = (ImageView) findViewById(R.id.imageView1);
+        new readWeatherTask().execute("http://api.wunderground.com/api/352f5fa78aee6c34/conditions/q/48109.json");
     }
 
     @Override
@@ -36,13 +39,13 @@ public class MainActivity extends Activity {
         return true;
     }
     
-    private class readWeatherTask extends AsyncTask<String, Integer, String> {
+    private class readWeatherTask extends AsyncTask<String, Integer, Integer> {
 
 		@Override
-		protected String doInBackground(String... urls) {
+		protected Integer doInBackground(String... urls) {
 			// TODO Auto-generated method stub
 			InputStream is = null;
-			String result = null;
+			Integer result = null;
 			try {
 				URL url = new URL((String) urls[0]);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -59,8 +62,7 @@ public class MainActivity extends Activity {
 				reader.read(buffer);
 				WeatherReport report = new WeatherReport(new String(buffer));
 				Recommender recommender = new Recommender(report);
-				result = recommender.getClothesToWear() + String.valueOf(report.getFeelLikeCelcius());
-				Log.d("WhatToWear", result);
+				result = recommender.getClothesToWear();
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -81,8 +83,18 @@ public class MainActivity extends Activity {
 		}
     	
 		@Override
-		protected void onPostExecute(String result) {
-			display.setText(result);
+		protected void onPostExecute(Integer result) {
+			display.setText(result.toString());
+			if (result == 1) {
+				image.setImageResource(R.drawable.tshirt);
+			} else if (result == 2) {
+				image.setImageResource(R.drawable.long_sleeve);
+			} else if (result == 3) {
+				image.setImageResource(R.drawable.jacket);
+ 			} else if (result == 4) {
+ 				image.setImageResource(R.drawable.winter_jacket);
+ 			}
+			
 		}
     }
     
