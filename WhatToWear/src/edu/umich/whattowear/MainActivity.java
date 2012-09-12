@@ -58,7 +58,8 @@ public class MainActivity extends Activity {
 				char[] buffer = new char[10000];
 				reader.read(buffer);
 				WeatherReport report = new WeatherReport(new String(buffer));
-				result = String.valueOf(report.getFeelLikeCelcius());
+				Recommender recommender = new Recommender(report);
+				result = recommender.getClothesToWear() + String.valueOf(report.getFeelLikeCelcius());
 				Log.d("WhatToWear", result);
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
