@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.app.Activity;
@@ -13,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -21,14 +20,13 @@ public class MainActivity extends Activity
 {
 	  private static final String DEBUG_TAG = "WeatherApp";
 	
-	private TextView display;
-	private ImageView image;
+	private EditText urlText;
+    private TextView textView;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);;
-		  display = (TextView) findViewById(R.id.edit_message);
-		// image = (ImageView) findViewById(R.id.imageView);
+		//  textView = (TextView) findViewById(R.id.myText);
 		//Cant get these to work
 		new getWeatherInfo().execute("http://api.wunderground.com/api/14faba995dd5152f/conditions/q/48109.json");
 	}
@@ -74,12 +72,20 @@ public class MainActivity extends Activity
 			return contentAsString;
 		}
 
+		
+	
+		
 		@Override
 		protected Object doInBackground(Object... params) {
 			// TODO Auto-generated method stub
 			return null;
 		}
+		protected void onPostExecute(String result) {
+			
+			
+ 			}
+			
+		}
 
 	}
 
-}
