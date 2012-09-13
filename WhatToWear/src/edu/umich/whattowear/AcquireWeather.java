@@ -21,14 +21,14 @@ public class AcquireWeather extends Activity
 {
 	  private static final String DEBUG_TAG = "WeatherApp";
 	
-	//private TextView display;
-	//private ImageView image;
+	private TextView display;
+	private ImageView image;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);;
-		//  display = (TextView) findViewById(R.id.text);
-		// image = (ImageView) findViewById(R.id.imageView1);
+		  display = (TextView) findViewById(R.id.edit_message);
+		// image = (ImageView) findViewById(R.id.imageView);
 		//Cant get these to work
 		new getWeatherInfo().execute("http://api.wunderground.com/api/14faba995dd5152f/conditions/q/48109.json");
 	}
