@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
 	private ImageView clothesImage;
 	private double latval; //Ken
 	private double lonval;
+	private Button geoButton;
 	
 	LocationManager locationManager; //Ken
 	Location location; //Ken
@@ -61,13 +62,24 @@ public class MainActivity extends Activity {
         tempText = (TextView) findViewById(R.id.temp_text);
         clothesText = (TextView) findViewById(R.id.clothes_text);
         clothesImage = (ImageView) findViewById(R.id.clothes_image);
-       
+        geoButton = (Button) findViewById(R.id.geo_button);
+        
         submitButton.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				String postal = postalInput.getText().toString();
 				String url = "http://api.wunderground.com/api/352f5fa78aee6c34/conditions/q/" + postal + ".json";
+				new readWeatherTask().execute(url);
+			}
+		});
+        
+        geoButton.setOnClickListener(new View.OnClickListener() {
+    		
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String postal = postalInput.getText().toString();
+				String url = "http://api.wunderground.com/api/352f5fa78aee6c34/conditions/q/" + latval + "," + lonval + ".json";
 				new readWeatherTask().execute(url);
 			}
 		});
