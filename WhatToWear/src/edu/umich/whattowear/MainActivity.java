@@ -8,9 +8,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
-//I love cheese muffin.
+
 
 public class MainActivity extends Activity {
 	private Button submitButton;
@@ -30,19 +34,36 @@ public class MainActivity extends Activity {
 	private TextView tempText;
 	private TextView clothesText;
 	private ImageView clothesImage;
+	private double latval; //Ken
+	private double lonval;
+	
+	LocationManager locationManager; //Ken
+	Location location; //Ken
+	String provider; //Ken
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE); //Ken
+        
+        Criteria criteria = new Criteria(); //Ken
+        provider = locationManager.getBestProvider(criteria, false);
+        location = locationManager.getLastKnownLocation(provider);
+
+        latval = location.getLatitude();
+        lonval = location.getLongitude();
+        
         submitButton = (Button) findViewById(R.id.submit_button);
         postalInput = (EditText) findViewById(R.id.postal_input);
         cityText = (TextView) findViewById(R.id.city_text);
         tempText = (TextView) findViewById(R.id.temp_text);
         clothesText = (TextView) findViewById(R.id.clothes_text);
         clothesImage = (ImageView) findViewById(R.id.clothes_image);
+       
         submitButton.setOnClickListener(new View.OnClickListener() {
-			
+		
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				String postal = postalInput.getText().toString();
@@ -98,7 +119,10 @@ public class MainActivity extends Activity {
 			Recommender recommender = new Recommender(report);
 			cityText.setText("Your city is " + report.getCity());
 			String tempString = "Current temperature: " + report.getTempString() + "\nFeels like: " + report.getFeelslikeString();
-			tempText.setText(tempString);
+			//tempText.setText(tempString);
+			
+			tempText.setText(tempString + "\nlat is: " + latval + "\nlon is: " + lonval);
+			
 			int result = recommender.getClothesToWear();
 			clothesText.setText("Your should wear ");
 			if (result == 1) {
