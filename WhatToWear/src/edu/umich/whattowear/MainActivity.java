@@ -34,22 +34,22 @@ public class MainActivity extends Activity {
 	private TextView tempText;
 	private TextView clothesText;
 	private ImageView clothesImage;
-	private double latval; //Ken
+	private double latval;
 	private double lonval;
 	private Button geoButton;
 	
-	LocationManager locationManager; //Ken
-	Location location; //Ken
-	String provider; //Ken
+	LocationManager locationManager;
+	Location location;
+	String provider;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE); //Ken
-        
-        Criteria criteria = new Criteria(); //Ken
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        //Get location through either GPS or Network
+        Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
         location = locationManager.getLastKnownLocation(provider);
 
@@ -132,7 +132,6 @@ public class MainActivity extends Activity {
 			cityText.setText("Your city is " + report.getCity());
 			String tempString = "Current temperature: " + report.getTempString() + "\nFeels like: " + report.getFeelslikeString();
 			//tempText.setText(tempString);
-			
 			tempText.setText(tempString + "\nlat is: " + latval + "\nlon is: " + lonval);
 			
 			int result = recommender.getClothesToWear();
