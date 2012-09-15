@@ -21,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
+//I love cheese muffin.
+
 public class MainActivity extends Activity {
 	private Button submitButton;
 	private EditText postalInput;
