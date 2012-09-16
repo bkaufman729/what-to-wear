@@ -1,3 +1,4 @@
+
 package edu.umich.whattowear;
 
 import org.json.JSONException;
@@ -26,6 +27,7 @@ public class WeatherReport {
 		return degreeCelcius;
 	}
 	
+	
 	public double getCelcius() {
 		double degreeCelcius = 0.0;
 		try {
@@ -37,6 +39,39 @@ public class WeatherReport {
 		return degreeCelcius;
 	}
 	
+	public double getFeelLikeFahrenheit() {
+		double degreeFahrenheit = 0.0;
+		try {
+			degreeFahrenheit = weatherReport.getJSONObject("current_observation").getDouble("feelslike_f");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return degreeFahrenheit;
+	}
+	
+	
+	public double getFahrenheit() {
+		double degreeFahrenheit = 0.0;
+		try {
+			degreeFahrenheit = weatherReport.getJSONObject("current_observation").getDouble("temp_f");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return degreeFahrenheit;
+	}
+	
+	public String getCondition() {
+		String condition="Clear";
+		try {
+			condition = weatherReport.getJSONObject("current_observation").getString("weather");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return condition;
+	}
 	
 	public String getCity() {
 		String city = "";
