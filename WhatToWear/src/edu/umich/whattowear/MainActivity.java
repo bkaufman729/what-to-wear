@@ -8,12 +8,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -22,6 +25,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
+
 public class MainActivity extends Activity {
 	private Button submitButton;
 	private EditText postalInput;
@@ -29,12 +34,19 @@ public class MainActivity extends Activity {
 	private TextView tempText;
 	private TextView clothesText;
 	private ImageView clothesImage;
+	private double latval;
+	private double lonval;
+	private Button geoButton;
 	
 	//Splash stuff
 	protected Dialog mSplashDialog;
 
 	
 	
+	
+	LocationManager locationManager;
+	Location location;
+	String provider;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,18 +73,40 @@ public class MainActivity extends Activity {
     
         ////////////
         
+        
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        //Get location through either GPS or Network
+        Criteria criteria = new Criteria();
+        provider = locationManager.getBestProvider(criteria, false);
+        location = locationManager.getLastKnownLocation(provider);
+
+        latval = location.getLatitude();
+        lonval = location.getLongitude();
+        
         submitButton = (Button) findViewById(R.id.submit_button);
         postalInput = (EditText) findViewById(R.id.postal_input);
         cityText = (TextView) findViewById(R.id.city_text);
         tempText = (TextView) findViewById(R.id.temp_text);
         clothesText = (TextView) findViewById(R.id.clothes_text);
         clothesImage = (ImageView) findViewById(R.id.clothes_image);
+        geoButton = (Button) findViewById(R.id.geo_button);
+        
         submitButton.setOnClickListener(new View.OnClickListener() {
-			
+		
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				String postal = postalInput.getText().toString();
 				String url = "http://api.wunderground.com/api/14faba995dd5152f/conditions/q/" + postal + ".json";
+				new readWeatherTask().execute(url);
+			}
+		});
+        
+        geoButton.setOnClickListener(new View.OnClickListener() {
+    		
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String postal = postalInput.getText().toString();
+				String url = "http://api.wunderground.com/api/352f5fa78aee6c34/conditions/q/" + latval + "," + lonval + ".json";
 				new readWeatherTask().execute(url);
 			}
 		});
@@ -168,7 +202,9 @@ public class MainActivity extends Activity {
 			Recommender recommender = new Recommender(report);
 			cityText.setText("Your city is " + report.getCity());
 			String tempString = "Current temperature: " + report.getTempString() + "\nFeels like: " + report.getFeelslikeString();
-			tempText.setText(tempString);
+			//tempText.setText(tempString);
+			tempText.setText(tempString + "\nlat is: " + latval + "\nlon is: " + lonval);
+			
 			int result = recommender.getClothesToWear();
 			clothesText.setText("Your should wear ");
 			if (result == 1) {
