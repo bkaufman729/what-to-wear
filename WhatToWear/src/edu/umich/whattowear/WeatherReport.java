@@ -1,71 +1,29 @@
 
 package edu.umich.whattowear;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class WeatherReport {
 	private JSONObject weatherReport;
+	private String location;
 	
-	public WeatherReport(String json) {
+	public WeatherReport(String json, String loc) {
 		try {
 			weatherReport = new JSONObject(json);
+			location = loc;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public double getFeelLikeCelcius() {
-		double degreeCelcius = 0.0;
-		try {
-			degreeCelcius = weatherReport.getJSONObject("current_observation").getDouble("feelslike_c");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		return degreeCelcius;
-	}
-	
-	
-	public double getCelcius() {
-		double degreeCelcius = 0.0;
-		try {
-			degreeCelcius = weatherReport.getJSONObject("current_observation").getDouble("temp_c");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		return degreeCelcius;
-	}
-	
-	public double getFeelLikeFahrenheit() {
-		double degreeFahrenheit = 0.0;
-		try {
-			degreeFahrenheit = weatherReport.getJSONObject("current_observation").getDouble("feelslike_f");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		return degreeFahrenheit;
-	}
-	
-	
-	public double getFahrenheit() {
-		double degreeFahrenheit = 0.0;
-		try {
-			degreeFahrenheit = weatherReport.getJSONObject("current_observation").getDouble("temp_f");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		return degreeFahrenheit;
-	}
-	
-	public String getCondition() {
+	public String getCondition(int hoursLater) {
 		String condition="Clear";
 		try {
-			condition = weatherReport.getJSONObject("current_observation").getString("weather");
+			JSONArray forecasts = weatherReport.getJSONArray("hourly_forecast");
+			condition = forecasts.getJSONObject(2 + hoursLater).getString("condition");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,36 +32,19 @@ public class WeatherReport {
 	}
 	
 	public String getCity() {
-		String city = "";
-		try {
-			city = weatherReport.getJSONObject("current_observation").getJSONObject("display_location").getString("city");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return city;
+		return location;
 	}
 	
-	public String getTempString() {
-		String tempString = "";
+	public double getTemp(int hoursLater) {
+		double currentTemp = 0.0;
 		try {
-			tempString = weatherReport.getJSONObject("current_observation").getString("temperature_string");
+			JSONArray forecasts = weatherReport.getJSONArray("hourly_forecast");
+			currentTemp = forecasts.getJSONObject(2 + hoursLater).getJSONObject("temp").getDouble("english");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return tempString;
-	}
-	
-	public String getFeelslikeString() {
-		String feelslikeString = "";
-		try {
-			feelslikeString = weatherReport.getJSONObject("current_observation").getString("feelslike_string");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return feelslikeString;
+		return currentTemp;
 	}
 	
 }

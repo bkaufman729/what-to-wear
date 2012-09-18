@@ -10,13 +10,13 @@ public class Recommender {
 	//Fahrenheit numbers
 	//1-5 No rain, Greater then 6 Rain.  Should probably switch to 
 	//better system then numbers
-	public int getClothesToWear() {
+	public int getClothesToWear(int hoursLater) {
 		
-		String condition=weatherReport.getCondition();
+		String condition=weatherReport.getCondition(hoursLater);
 		if(condition.indexOf("Rain")>=0)
 			condition="Rain";
 		
-		if(weatherReport.getFeelLikeFahrenheit() >= 70)
+		if(weatherReport.getTemp(hoursLater) >= 70)
 		{
 			//Tshirt and Shorts
 			
@@ -26,7 +26,7 @@ public class Recommender {
 				return 1;
 			
 		}
-		else if(weatherReport.getFeelLikeFahrenheit() >= 60)
+		else if(weatherReport.getTemp(hoursLater) >= 60)
 		{
 			//Longsleeve pants
 			if(condition=="Rain")
@@ -34,12 +34,12 @@ public class Recommender {
 			else
 				return 2;
 		}
-		else if(weatherReport.getFeelLikeFahrenheit() >= 50)
+		else if(weatherReport.getTemp(hoursLater) >= 50)
 		{
 			//Sweatshirt pants
 			return 3;
 		}
-		else if(weatherReport.getFeelLikeFahrenheit() >= 40)
+		else if(weatherReport.getTemp(hoursLater) >= 40)
 		{
 			//Jacket pants
 			if(condition=="Rain")
@@ -56,6 +56,19 @@ public class Recommender {
 				return 5;
 		}
 
+	}
+	
+	public String getTempString(int hoursLater) {
+		String tempString = "";
+		if (hoursLater == 0) {
+			tempString = "Current temperature: ";
+		} else if (hoursLater == 3) {
+			tempString = "Temperature after 3 hours: ";
+		} else if (hoursLater == 24) {
+			tempString = "Temperature tomorrow: ";
+		}
+		tempString += String.valueOf(weatherReport.getTemp(hoursLater));
+		return tempString;
 	}
 	
 	/*
