@@ -1,5 +1,7 @@
 package edu.umich.whattowear;
 
+import android.util.Log;
+
 public class Recommender {
 	private WeatherReport weatherReport;
 	
@@ -13,9 +15,11 @@ public class Recommender {
 	public int getClothesToWear(int hoursLater) {
 		
 		String condition=weatherReport.getCondition(hoursLater);
-		if(condition.indexOf("Rain")>=0)
+		if(condition.indexOf("Rain")>=0 || condition.indexOf("Thunderstorm") >= 0) {
 			condition="Rain";
+		}
 		
+		Log.d(MainActivity.TAG, condition);
 		if(weatherReport.getTemp(hoursLater) >= 70)
 		{
 			//Tshirt and Shorts
@@ -58,18 +62,7 @@ public class Recommender {
 
 	}
 	
-	public String getTempString(int hoursLater) {
-		String tempString = "";
-		if (hoursLater == 0) {
-			tempString = "Current temperature: ";
-		} else if (hoursLater == 3) {
-			tempString = "Temperature after 3 hours: ";
-		} else if (hoursLater == 24) {
-			tempString = "Temperature tomorrow: ";
-		}
-		tempString += String.valueOf(weatherReport.getTemp(hoursLater));
-		return tempString;
-	}
+	
 	
 	/*
 	public int getClothesToWear() {

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+
     <EditText
         android:id="@+id/postal_input"
         android:layout_width="wrap_content"
@@ -44,20 +45,28 @@
         android:text="Current temperature: "
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
+    <ImageView
+        android:id="@+id/clothes_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" 
+        android:layout_below="@+id/clothes_text"/>
+
     <TextView
         android:id="@+id/clothes_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/temp_text"
+        android:layout_below="@+id/condition_text"
         android:text="You should wear "
         android:textAppearance="?android:attr/textAppearanceMedium" />
-	
-    <ImageView
-        android:id="@+id/clothes_image"
+    
+	 <TextView
+        android:id="@+id/condition_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/clothes_text"
-        android:layout_marginTop="16dp" />
-
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/temp_text"
+        android:text="Condition: "
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 </RelativeLayout>

@@ -30,6 +30,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -41,15 +42,14 @@ import android.app.ActionBar;
 
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
-	private final static String TAG = "WhatToWear";
-	
+	public final static String TAG = "WhatToWear";
+	private final static String API_KEY = "352f5fa78aee6c34";
 	//Splash stuff
 	protected Dialog mSplashDialog;
 	private SectionsPagerAdapter mSectionsPagerAdapter;
 	private ViewPager mViewPager;
 	private static LocationManager locationManager;
 	private static InputMethodManager imm;
-	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -142,6 +142,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         return true;
     }
     
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    		case R.id.menu_refresh:
+    			Log.d(TAG, String.valueOf(getActionBar().getSelectedNavigationIndex()));
+    			return true;
+    		default:
+    			return super.onOptionsItemSelected(item);
+    	}
+    }
+    
     private class MyStateSaver {
         public boolean showSplashScreen = false;
         // Your other important fields here
@@ -205,6 +216,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		private TextView cityText;
 		private TextView tempText;
 		private TextView clothesText;
+		private TextView conditionText;
 		private ImageView clothesImage;
 		private double latval;
 		private double lonval;
@@ -231,6 +243,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	        cityText = (TextView) rootView.findViewById(R.id.city_text);
 	        tempText = (TextView) rootView.findViewById(R.id.temp_text);
 	        clothesText = (TextView) rootView.findViewById(R.id.clothes_text);
+	        conditionText = (TextView) rootView.findViewById(R.id.condition_text);
 	        clothesImage = (ImageView) rootView.findViewById(R.id.clothes_image);
 	        Bundle args = getArguments();
 	        
@@ -238,9 +251,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    		
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					String postal = postalInput.getText().toString();
-					String url = "http://api.wunderground.com/api/352f5fa78aee6c34/hourly/q/" + postal + ".json";
-					new readWeatherTask().execute(url);
+					String postal = postalInput.getText().toString().trim();
+					getRecommendation(postal);
 				}
 			});
 	        
@@ -250,11 +262,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		        case 1: hoursLater = 3; break;
 		        case 2: hoursLater = 24; break;
 	        }
-	        
-	        String url = "http://api.wunderground.com/api/352f5fa78aee6c34/hourly/q/" + latval + "," + lonval + ".json";
-			new readWeatherTask().execute(url);
+	        refreshRecommendation();
 	        return rootView;
 	        
+		}
+		
+		public void refreshRecommendation() {
+			cityText.setText("");
+			tempText.setText("");
+			clothesText.setText("");
+			getRecommendation(String.valueOf(latval) + "," + String.valueOf(lonval));
+		}
+		
+		public void getRecommendation(String query) {
+			String url = "http://api.wunderground.com/api/" + API_KEY + "/hourly/q/" + query + ".json";
+			new readWeatherTask().execute(url);
 		}
 		
 		private class readWeatherTask extends AsyncTask<String, Integer, WeatherReport> {
@@ -307,13 +329,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				
 				Recommender recommender = new Recommender(report);
 				cityText.setText("Your city is " + report.getCity());
-				String tempString;
-				tempString = recommender.getTempString(hoursLater);
+				String tempString = report.getTempString(hoursLater);
 				tempText.setText(tempString);
 				//tempText.setText(tempString + "\nlat is: " + latval + "\nlon is: " + lonval);
+				conditionText.setText("Condition: ");
+				conditionText.append(report.getCondition(hoursLater));
 				
 				int result = recommender.getClothesToWear(hoursLater);
 				clothesText.setText("Your should wear ");
+				Log.d(TAG, String.valueOf(result));
 				if (result == 1) {
 					clothesText.append("a T-shirt and shorts");
 					clothesImage.setImageResource(R.drawable.tshirtshorts);

@@ -47,4 +47,16 @@ public class WeatherReport {
 		return currentTemp;
 	}
 	
+	public String getTempString(int hoursLater) {
+		String tempString = "";
+		if (hoursLater == 0) {
+			tempString = "Current temperature: ";
+		} else if (hoursLater == 3) {
+			tempString = "Temperature after 3 hours: ";
+		} else if (hoursLater == 24) {
+			tempString = "Temperature tomorrow: ";
+		}
+		tempString += String.valueOf(getTemp(hoursLater)) + " F";
+		return tempString;
+	}
 }
