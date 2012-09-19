@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -50,6 +52,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	private ViewPager mViewPager;
 	private static LocationManager locationManager;
 	private static InputMethodManager imm;
+	private static Context appContext;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,8 +80,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         imm = (InputMethodManager) MainActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        
-        
+        appContext = getApplicationContext();
     }
     
     //helper function to initialize the UI of the three tabs
@@ -133,7 +135,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
           public void run() {
             removeSplashScreen();
           }
-        }, 5000);   //Edit this number for Splash length
+        }, 3000);   //Edit this number for Splash length
     }
     
     @Override
@@ -145,12 +147,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
+    		case R.id.menu_settings:
+    			Intent intent = new Intent(this, SettingActivity.class);
+    			int requestCode = 1;
+    			startActivityForResult(intent, requestCode);
+    			return true;
     		case R.id.menu_refresh:
-    			Log.d(TAG, String.valueOf(getActionBar().getSelectedNavigationIndex()));
+    			refreshFragments();
     			return true;
     		default:
     			return super.onOptionsItemSelected(item);
     	}
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	refreshFragments();
     }
     
     private class MyStateSaver {
@@ -158,6 +170,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // Your other important fields here
     }
     
+    public void refreshFragments() {
+    	for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+    		RecommendationFragment fragment = (RecommendationFragment) mSectionsPagerAdapter.getFragments().get(i);
+    		if (fragment != null) {
+    			fragment.refreshRecommendation();
+    		}
+    		
+    	}
+    }
 
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
@@ -175,20 +196,32 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 	
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
+		private ArrayList<Fragment> fragments;
+		
+		public ArrayList<Fragment> getFragments() {
+			return fragments;
+		}
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
+			fragments = new ArrayList<Fragment>();
+			fragments.add(0, null);
+			fragments.add(1, null);
+			fragments.add(2, null);
 			// TODO Auto-generated constructor stub
 		}
 
 		@Override
 		public Fragment getItem(int i) {
 			// TODO Auto-generated method stub
-			Fragment fragment = new RecommendationFragment();
-			Bundle args = new Bundle();
-			args.putInt(RecommendationFragment.FRAGMENT_TYPE, i);
-			fragment.setArguments(args);
-			return fragment;
+			
+			if (fragments.get(i) == null) {
+				Fragment fragment = new RecommendationFragment();
+				Bundle args = new Bundle();
+				args.putInt(RecommendationFragment.FRAGMENT_TYPE, i);
+				fragment.setArguments(args);
+				fragments.add(i, fragment);
+			}
+			return fragments.get(i);
 		}
 
 		@Override
@@ -259,8 +292,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	        //set the hoursLater for each tab
 	        switch (args.getInt((FRAGMENT_TYPE))) {
 		        case 0: hoursLater = 0; break;
-		        case 1: hoursLater = 3; break;
-		        case 2: hoursLater = 24; break;
+		        case 1: hoursLater = 2; break;
+		        case 2: hoursLater = 23; break;
 	        }
 	        refreshRecommendation();
 	        return rootView;
@@ -309,12 +342,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			protected WeatherReport doInBackground(String... urls) {
 				// TODO Auto-generated method stub
 				//get the city name from latlong or zip code
-				String locationResponse = getResponse(urls[0].replace("hourly", "geolookup"));
+				String conditionResponse = getResponse(urls[0].replace("hourly", "conditions"));
+				Log.d(TAG, conditionResponse);
 				WeatherReport report = null;
 				try {
-					JSONObject locationJSON = new JSONObject(locationResponse);
+					JSONObject conditionJSON = new JSONObject(conditionResponse);
 					String response = getResponse(urls[0]);
-					report = new WeatherReport(response, locationJSON.getJSONObject("location").getString("city"));
+					report = new WeatherReport(response, conditionJSON.getJSONObject("current_observation"), appContext);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -327,16 +361,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				imm.hideSoftInputFromWindow(postalInput.getWindowToken(), 0);
 				//Makes the keyboard go away after submit is pressed
 				
-				Recommender recommender = new Recommender(report);
+				Recommender recommender = new Recommender(report, appContext);
 				cityText.setText("Your city is " + report.getCity());
 				String tempString = report.getTempString(hoursLater);
 				tempText.setText(tempString);
 				//tempText.setText(tempString + "\nlat is: " + latval + "\nlon is: " + lonval);
-				conditionText.setText("Condition: ");
-				conditionText.append(report.getCondition(hoursLater));
+				conditionText.setText("Condition: " + report.getCondition(hoursLater));
 				
 				int result = recommender.getClothesToWear(hoursLater);
-				clothesText.setText("Your should wear ");
+				clothesText.setText("You should wear ");
 				Log.d(TAG, String.valueOf(result));
 				if (result == 1) {
 					clothesText.append("a T-shirt and shorts");

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:title="Preferences" >
+ 
+ <PreferenceCategory
+     android:title="Selection">
+      
+    <ListPreference
+        android:key="unit"
+        android:title="Units"
+        android:summary="Select preferred unit system"
+        android:entries="@array/units"
+        android:entryValues="@array/types_values"
+        android:defaultValue="0"
+        />
+    
+    <EditTextPreference
+        android:key="ttext"
+        android:title="Tshirt temperature"
+        android:summary="Tap to enter minimum temeperature"
+        android:dialogTitle="Enter degrees (in F)"
+        android:defaultValue="70"
+        android:inputType="number"
+    />
+    
+    <EditTextPreference
+        android:key="sweattext"
+        android:title="Sweatshirt/pants temperature"
+        android:summary="Tap to enter minimum temeperature"
+        android:dialogTitle="Enter degrees (in F)"
+        android:defaultValue="60"
+        android:inputType="number"
+    />
+    
+     <EditTextPreference
+        android:key="jackettext"
+        android:title="Jacket/pants temperature"
+        android:summary="Tap to enter minimum temeperature"
+        android:dialogTitle="Enter degrees (in F)"
+        android:defaultValue="50"
+        android:inputType="number"
+    />
+    
+    <EditTextPreference
+        android:key="wintertext"
+        android:title="Winter jacket/pants/hat temperature"
+        android:summary="Tap to enter minimum temeperature"
+        android:dialogTitle="Enter degrees (in F)"
+        android:defaultValue="40"
+        android:inputType="number"
+    />
+    
+   
+
+     
+  </PreferenceCategory>
+
+ 
+   
+</PreferenceScreen>

@@ -1,9 +1,21 @@
 <resources>
 
-    <string name="app_name">WhatToWear</string>
+    <string name="app_name">WheatherFit</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">WhatToWear</string>
+    <string name="title_activity_main">WeatherFit</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="set_preferences">SetPrefs</string>
+
+    <string-array name="units">
+        <item>Fahrenheit</item>
+        <item>Celsius</item>
+    </string-array>
+    <string-array name="types_values">
+        <item>Fahrenheit</item>
+        <item>Celcius</item>
+    </string-array>
+
+    <string name="title_activity_setting">SettingActivity</string>
 
 </resources>
