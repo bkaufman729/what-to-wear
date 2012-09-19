@@ -10,20 +10,31 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class WeatherReport {
-	private JSONObject weatherReport;
 	private JSONObject currentObservation;
 	private SharedPreferences preferences;
+	private JSONObject weatherReport;
 	public WeatherReport(String json, JSONObject observation, Context context) {
 		try {
 			weatherReport = new JSONObject(json);
 			preferences = PreferenceManager.getDefaultSharedPreferences(context);
 			currentObservation = observation;
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
-	
+
+	public String getCity() {
+		String city = "";
+		try {
+			city = currentObservation.getJSONObject("display_location").getString("city");
+		} catch (JSONException e) {
+
+			e.printStackTrace();
+		}
+		return city;
+	}
+
 	public String getCondition(int hoursLater) {
 		String condition="Clear";
 		if (hoursLater == 0) {
@@ -33,23 +44,38 @@ public class WeatherReport {
 			JSONArray forecasts = weatherReport.getJSONArray("hourly_forecast");
 			condition = forecasts.getJSONObject(hoursLater).getString("condition");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} 
 		return condition;
 	}
-	
-	public String getCity() {
-		String city = "";
+
+	public String getCurrentCondition() {
+		String currentCondition = "Clear";
 		try {
-			city = currentObservation.getJSONObject("display_location").getString("city");
+			currentCondition = currentObservation.getString("weather");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
-		return city;
+		return currentCondition;
 	}
-	
+
+	public double getCurrentTemp() {
+		double currentTemp = 0.0;
+		try {
+			if (preferences.getString("unit", "Fahrenheit").equals("Fahrenheit")) {
+				currentTemp = Double.valueOf(currentObservation.getString("temp_f"));
+			} else {
+				currentTemp = Double.valueOf(currentObservation.getString("temp_c"));
+			}
+		} catch (JSONException e) {
+
+			e.printStackTrace();
+		}
+		return currentTemp;
+	}
+
 	public double getTemp(int hoursLater) {
 		double currentTemp = 0.0;
 		if (hoursLater == 0) {
@@ -57,34 +83,16 @@ public class WeatherReport {
 		}
 		try {
 			JSONArray forecasts = weatherReport.getJSONArray("hourly_forecast");
-			currentTemp = forecasts.getJSONObject(hoursLater).getJSONObject("temp").getDouble("english");
+			if (preferences.getString("unit", "Fahrenheit").equals("Fahrenheit")) {
+				currentTemp = forecasts.getJSONObject(hoursLater).getJSONObject("temp").getDouble("english");
+			} else {
+				currentTemp = forecasts.getJSONObject(hoursLater).getJSONObject("temp").getDouble("metric");
+			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return currentTemp;
-	}
-	
-	public double getCurrentTemp() {
-		double currentTemp = 0.0;
-		try {
-			currentTemp = Double.valueOf(currentObservation.getString("temp_f"));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return currentTemp;
-	}
-	
-	public String getCurrentCondition() {
-		String currentCondition = "Clear";
-		try {
-			currentCondition = currentObservation.getString("weather");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return currentCondition;
 	}
 	public String getTempString(int hoursLater) {
 		String tempString = "";
@@ -96,7 +104,7 @@ public class WeatherReport {
 		} else if (hoursLater == 23) {
 			tempString = "Temperature tomorrow: ";
 		}
-		
+
 		tempString += String.valueOf(getTemp(hoursLater)) + " " + preferences.getString("unit", "Fahrenheit");
 		return tempString;
 	}

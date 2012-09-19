@@ -23,7 +23,8 @@ public class Recommender {
 		}
 		
 		Log.d(MainActivity.TAG, condition);
-		if(weatherReport.getTemp(hoursLater) >= Integer.valueOf(preferences.getString("ttext", "70")))
+		double tempToCompare = tempConvert(weatherReport.getTemp(hoursLater));
+		if(tempToCompare >= Integer.valueOf(preferences.getString("ttext", "70")))
 		{
 			//Tshirt and Shorts
 			
@@ -33,7 +34,7 @@ public class Recommender {
 				return 1;
 			
 		}
-		else if(weatherReport.getTemp(hoursLater) >= Integer.valueOf(preferences.getString("sweattext", "60")))
+		else if(tempToCompare >= Integer.valueOf(preferences.getString("sweattext", "60")))
 		{
 			//Longsleeve pants
 			if(condition=="Rain")
@@ -41,12 +42,12 @@ public class Recommender {
 			else
 				return 2;
 		}
-		else if(weatherReport.getTemp(hoursLater) >= Integer.valueOf(preferences.getString("jackettext", "50")))
+		else if(tempToCompare >= Integer.valueOf(preferences.getString("jackettext", "50")))
 		{
 			//Sweatshirt pants
 			return 3;
 		}
-		else if(weatherReport.getTemp(hoursLater) >= Integer.valueOf(preferences.getString("wintertext", "40")))
+		else if(tempToCompare >= Integer.valueOf(preferences.getString("wintertext", "40")))
 		{
 			//Jacket pants
 			if(condition=="Rain")
@@ -65,21 +66,11 @@ public class Recommender {
 
 	}
 	
-	
-	
-	/*
-	public int getClothesToWear() {
-		if (weatherReport.getFeelLikeCelcius() >= 26.0) {
-			return 1;
-		} else if (weatherReport.getFeelLikeCelcius() >= 15.0) {
-			return 2;
-		} else if (weatherReport.getFeelLikeCelcius() >= 5.0) {
-			return 3;
-		} else if (weatherReport.getFeelLikeCelcius() >= -5.0) {
-			return 4;
+	private double tempConvert(double temp) {
+		if (preferences.getString("unit", "Fahrenheit").equals("Celcius")) {
+			return temp * 9 / 5 + 32;
 		} else {
-			return 5;
+			return temp;
 		}
 	}
-	*/
 }
