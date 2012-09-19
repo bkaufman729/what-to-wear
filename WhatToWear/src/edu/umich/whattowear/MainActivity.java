@@ -130,6 +130,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 					clothesText.append("a jacket, pants, a winter hat, and boots");
 					clothesImage.setImageResource(R.drawable.jacketpantshatboots);
 				}
+				clothesImage.setVisibility(View.VISIBLE);
 
 			}
 		}
@@ -200,6 +201,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			cityText.setText("");
 			tempText.setText("");
 			clothesText.setText("");
+			conditionText.setText("");
+			clothesImage.setVisibility(View.INVISIBLE);
 			getRecommendation(String.valueOf(latval) + "," + String.valueOf(lonval));
 		}
 	}
